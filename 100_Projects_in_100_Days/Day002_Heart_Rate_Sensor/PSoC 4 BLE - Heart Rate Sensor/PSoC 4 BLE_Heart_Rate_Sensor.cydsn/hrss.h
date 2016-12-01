@@ -74,12 +74,12 @@ typedef enum
 ***************************************/
 
 void HeartRateCallBack(uint32 event, void* eventParam);
-void SimulateHeartRate(void);
+uint64 SimulateHeartRate(void);
 void HrsInit(void);
-void HrssSetEnergyExpended(uint16 energyExpended);
-void HrssAddRrInterval(uint16 rrIntervalValue);
-void HrssSendHeartRateNtf(void);
-void HrssSetBodySensorLocation(CYBLE_HRS_BSL_T location);
+uint64 HrssSetEnergyExpended(uint16 energyExpended);
+uint64 HrssAddRrInterval(uint16 rrIntervalValue);
+uint64 HrssSendHeartRateNtf(void);
+uint64 HrssSetBodySensorLocation(CYBLE_HRS_BSL_T location);
 uint16 HrssGetHrmDescriptor(void);
 
 /* Functions generated in macros */
