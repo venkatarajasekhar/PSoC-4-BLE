@@ -31,9 +31,9 @@
 /***************************************
 *        Function Prototypes
 ***************************************/
-void StackEventHandler(uint32 event, void* eventParam);
-void IasEventHandler(uint32 event, void* eventParam);
-void HandleAlertLEDs(uint8 status);
+Bool StackEventHandler(uint32 event, void* eventParam);
+Bool IasEventHandler(uint32 event, void* eventParam);
+Bool HandleAlertLEDs(uint8 status);
 
 
 /*******************************************************************************
@@ -89,12 +89,16 @@ int main()
 *  None
 *
 *******************************************************************************/
-void StackEventHandler(uint32 event, void *eventParam)
+Bool StackEventHandler(uint32 event, void *eventParam)
 {
-    switch(event)
+    uint32 StackEvtHandler = event;
+    Bool StackEvtHandlerVal = TRUE;
+	switch(StackEvtHandler)
     {
         /* Mandatory events to be handled by Find Me Target design */
         case CYBLE_EVT_STACK_ON:
+			//StackEvtHandlerVal = FALSE;
+			return StackEvtHandlerVal;
         case CYBLE_EVT_GAP_DEVICE_DISCONNECTED:
             /* ADD_CODE - Start the BLE fast advertisement. */
             CyBle_GappStartAdvertisement(CYBLE_ADVERTISING_FAST);
@@ -122,12 +126,14 @@ void StackEventHandler(uint32 event, void *eventParam)
 *  None
 *
 *******************************************************************************/
-void IasEventHandler(uint32 event, void *eventParam)
+Bool IasEventHandler(uint32 event, void *eventParam)
 {
     uint8 alertLevel;
-    
+    uint32 IASEvtHandler = event;
+    Bool RetEvtHandler = TRUE;
+    Bool RetHandlerAlertLED ;
     /* Alert Level Characteristic write event */
-    if(event == CYBLE_EVT_IASS_WRITE_CHAR_CMD)
+    if(IASEvtHandler == CYBLE_EVT_IASS_WRITE_CHAR_CMD)
     {
         /* Extract Alert Level value from the GATT DB using the 
 		 * CYBLE_IAS_ALERT_LEVEL as a parameter to CyBle_IassGetCharacteristicValue
@@ -136,8 +142,11 @@ void IasEventHandler(uint32 event, void *eventParam)
         CyBle_IassGetCharacteristicValue(CYBLE_IAS_ALERT_LEVEL, sizeof(alertLevel), &alertLevel);
         
         /*Based on alert Level level recieved, Drive LED*/
-        HandleAlertLEDs(alertLevel);
+        RetHandlerAlertLED = HandleAlertLEDs(alertLevel);
+	    return RetHandlerAlertLED;
     }
+	RetEvtHandler = FALSE;
+	return RetEvtHandler;
 }
 
 /*******************************************************************************
@@ -154,10 +163,11 @@ void IasEventHandler(uint32 event, void *eventParam)
 *  None
 *
 *******************************************************************************/
-void HandleAlertLEDs(uint8 status)
+Bool HandleAlertLEDs(uint8 status)
 {
     /* Update Alert LED status based on IAS Alert level characteristic. */
-    switch(status)
+    uint8 AlertLEDStatus = status;
+    switch(AlertLEDStatus)
     {
         case NO_ALERT:
             PWM_WriteCompare(NO_ALERT_COMPARE);
